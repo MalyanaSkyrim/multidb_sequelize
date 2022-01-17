@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     Product.associate = function (models) {
       Product.belongsTo(models.testdb_1.User, {
         foreignKey: {
-          allowNull: true,
+          allowNull: false,
           name: "userId",
         },
       });

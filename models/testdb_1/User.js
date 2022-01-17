@@ -1,37 +1,28 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('User', {
-    id: {
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define(
+    "User",
+    {
+      firstname: { type: DataTypes.STRING, allowNull: false },
+      lastname: { type: DataTypes.STRING, allowNull: false },
+      email: { type: DataTypes.STRING, allowNull: true }
     },
-    firstname: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },
-    lastname: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },
-    email: {
-      type: DataTypes.STRING(255),
-      allowNull: false
+    {
+      freezeTableName: true
     }
-  }, {
-    sequelize,
-    tableName: 'User',
-    schema: 'public',
-    timestamps: true,
-    indexes: [
-      {
-        name: "User_pkey",
-        unique: true,
-        fields: [
-          { name: "id" },
-        ]
+  );
+  User.associate = function (models) {
+    User.hasMany(models.testdb_1.Product, {
+      as:'products',
+      foreignKey: {
+        allowNull: true,
+        name: "userId",
       },
-    ]
-  });
+    });
+    User.addScope("defaultScope", {
+      include: [
+        { model: models.testdb_1.Product, as: "products" },
+      ],
+    });
+  };
+  return User;
 };

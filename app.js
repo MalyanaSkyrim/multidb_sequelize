@@ -1,13 +1,13 @@
 require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV || "development"}`,
+  path: `.env.${process.env.NODE_ENV || "development"}`
 });
 
 const express = require("express");
 const cors = require("cors");
 const db = require("./models");
 const { getDatabasesUrls } = require("./helpers/dbHelper");
-const { testDatabases } = require("./testDatabases");
 const app = express();
+const {User,Product} = require("./models").testdb_1
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -21,9 +21,14 @@ Promise.all(
       console.log("Drop and re-sync " + dbName);
     });
   })
-).then(() => {
+).then(async () => {
   console.log("All databases are re-synced ");
-  testDatabases();
+  //Test
+  const user = await User.create({firstname:'Mm',lastname:"Ml"});
+  const prod = await Product.create({name:'prod1',price:8.65});
+  await user.addProduct(prod);
+  await user.reload();
+  console.log({user:user.dataValues});
 });
 
 if (process.env.NODE_ENV === "development") {
